@@ -1,8 +1,10 @@
 import { Router } from 'express';
-import PropertyRouter from './property.routes.js';
+import ContactsRouter from './contacts.routes.js';
+import PropertyRouter from './properties.routes.js';
 
 const IndexRouter = Router();
 
-IndexRouter.use('/property', PropertyRouter);
+IndexRouter.use('/properties', PropertyRouter);
+IndexRouter.use('/contacts', ContactsRouter);
 
 export default IndexRouter;
