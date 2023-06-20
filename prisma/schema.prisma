@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model PropertyType{
+  id         Int     @id @default(autoincrement())
+
+  name       String    @db.Text
+
+  properties Property[]
+
+  properties_sub_types PropertySubType[]
+}
+
+model PropertySubType{
+  id         Int     @id @default(autoincrement())
+
+  name       String    @db.Text
+
+  properties_type PropertyType @relation(fields: [property_type_id], references: [id])
+
+  property_type_id Int 
+}
+
+model PropertyCharacteristic{
+   id         Int     @id @default(autoincrement())
+
+   name       String    @db.Text  @unique
+
+   properties Property[]
+
+}
+
+model PropertyAddress {
+  id            Int @id @default(autoincrement())
+
+  city          String @db.Text
+
+  district      String @db.Text
+
+  street        String @db.Text
+
+  state         String @db.Text
+
+  property      Property @relation(fields: [property_id], references: [id])
+
+  property_id   Int @unique
+}
+
+model Property {
+
+  id                  Int      @id @default(autoincrement())
+
+  title               String   @db.Text @unique
+
+  slogan              String?   @db.Text
+
+  description         String @db.Text
+
+  short_description   String @db.Text
+
+  price               Decimal @db.Decimal(10, 2)
+
+  type                PropertyType @relation(fields: [type_id], references: [id])
+
+  type_id             Int
+
+  emphasis            Boolean @default(false)
+
+  goal                String @db.Text
+
+  status              Boolean @default(true)
+
+  address             PropertyAddress?
+
+  number_of_rooms     Int
+
+  number_of_bathrooms Int
+  
+  number_of_garages   Int
+
+  suites              Int
+
+  total_area          Int
+
+  building_area       Int
+
+  characteristics PropertyCharacteristic[]
+
+  createdAt           DateTime @default(now())
+
+  updatedAt           DateTime @updatedAt
+}
+
