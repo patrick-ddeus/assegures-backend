@@ -100,3 +100,8 @@ model Property {
   updatedAt           DateTime @updatedAt
 }
 
+model PropertyImages {
+  id Int @id @default(autoincrement())
+
+  
+}

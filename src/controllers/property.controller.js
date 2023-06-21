@@ -1,23 +1,20 @@
 import { PrismaClient } from "@prisma/client";
+import httpStatus from "http-status";
+import { sanitizeObjects } from "../helpers/sanitizeObject.js";
+import PropertyService from "../services/property.service.js";
 
 const prisma = new PrismaClient();
 
-const getProperties = async function (req, res) {
+async function getProperties(req, res) {
+  const { city, district, priceMin, priceMax } = req.query;
+
   try {
-    const result = await prisma.propertyType.findMany({
-      include: {
-        properties_sub_types: true,
-      },
-    });
-    return res.status(200).json(result);
+    const properties = await PropertyService.getProperties({ city, district, priceMin, priceMax });
+    return res.status(httpStatus.OK).json(properties);
   } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    }
-  } finally {
-    await prisma.$disconnect();
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ error: error.message });
   }
-};
+}
 
 const createProperty = async function (req, res) {
   const
@@ -38,7 +35,7 @@ const createProperty = async function (req, res) {
       total_area,
       building_area,
       characteristics: bodyCharacteristics
-    } = req.body;
+    } = sanitizeObjects(req.body);
 
   try {
     const property = await prisma.property.create({
@@ -78,9 +75,14 @@ const createProperty = async function (req, res) {
         }
       }
     });
-    res.status(201).json(property);
+    res.status(httpStatus.CREATED).json(property);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    if (error.code === "P2002" && error.meta?.target?.includes("title")) {
+      return res.status(httpStatus.BAD_REQUEST).json({ error: "Erro, imóvel com esse título já cadastrado" });;
+    }
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ error: error.message });
+  } finally {
+    await prisma.$disconnect();
   }
 };
 
