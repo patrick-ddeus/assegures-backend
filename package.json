@@ -23,19 +23,22 @@
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.32.0",
     "string-strip-html": "^13.4.1",
-    "ts-node-dev": "^2.0.0"
+    "ts-node-dev": "^2.0.0",
+    "unidecode": "^0.1.8"
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
     "@types/node": "^20.3.1",
-    "eslint": "^8.42.0",
-    "eslint-config-semistandard": "^17.0.0",
+    "eslint": "^8.43.0",
+    "eslint-config-prettier": "^8.8.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-n": "^15.7.0",
+    "eslint-plugin-n": "^16.0.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.1.1",
     "nodemon": "^2.0.22",
+    "prettier": "2.8.8",
     "prisma": "^4.16.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.3"

@@ -44,9 +44,15 @@ model PropertyAddress {
 
   city          String @db.Text
 
+  city_index          String @db.Text
+
   district      String @db.Text
 
+  district_index      String @db.Text
+
   street        String @db.Text
+
+  street_index        String @db.Text
 
   state         String @db.Text
 
