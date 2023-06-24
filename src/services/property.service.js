@@ -4,7 +4,7 @@ import { UnidecodeString } from '../helpers/unidecode.js'
 
 const prisma = new PrismaClient()
 
-async function getProperties ({
+async function getProperties({
   cities,
   streets,
   districts,
@@ -112,7 +112,10 @@ async function getProperties ({
     })
     return result
   } catch (error) {
-    throw new Error(`Error ao pegar as propriedades: ${error.message}`)
+    throw new {
+      type: 'PropertiesQueryError',
+      message: `Error ao pegar as propriedades: ${error.message}`
+    }
   } finally {
     await prisma.$disconnect()
   }

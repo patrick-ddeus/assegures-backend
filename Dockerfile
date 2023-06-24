@@ -1,7 +1,11 @@
-FROM node:14
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
+FROM node:latest
+
+WORKDIR /usr/src/app
+
 COPY . .
-EXPOSE 3000
-CMD [ "node", "src/app.js" ]
+
+RUN npm install
+
+EXPOSE 5000
+
+CMD ["npm", "run", "start"]

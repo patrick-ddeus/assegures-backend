@@ -59,6 +59,9 @@ model PropertyAddress {
   property      Property @relation(fields: [property_id], references: [id])
 
   property_id   Int @unique
+
+
+  @@index(fields: [city, district, street])
 }
 
 model Property {
@@ -104,6 +107,7 @@ model Property {
   createdAt           DateTime @default(now())
 
   updatedAt           DateTime @updatedAt
+
 }
 
 model PropertyImages {

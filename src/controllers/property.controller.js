@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { PrismaClient } from '@prisma/client'
 import httpStatus from 'http-status'
 import { sanitizeObjects } from '../helpers/sanitizeObject.js'
@@ -91,12 +92,7 @@ const createProperty = async function (req, res) {
     })
     res.status(httpStatus.CREATED).json(property)
   } catch (error) {
-    if (error.code === 'P2002' && error.meta?.target?.includes('title')) {
-      return res
-        .status(httpStatus.BAD_REQUEST)
-        .json({ error: 'Erro, imóvel com esse título já cadastrado' })
-    }
-    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ error: error.message })
+    throw new { ...error }() // Possibly error P2002, see error.middleware.js
   } finally {
     await prisma.$disconnect()
   }
