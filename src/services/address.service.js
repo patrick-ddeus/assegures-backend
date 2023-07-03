@@ -32,7 +32,7 @@ async function getAddress(locale) {
   }
 
   try {
-    const result = await prisma.$queryRaw`
+    const [result] = await prisma.$queryRaw`
              SELECT
             json_agg(json_build_object('id', id, 'city', city, 'state', state)) AS cities,
             json_agg(json_build_object('id', id, 'district', district, 'city', city, 'state', state)) AS districts,
@@ -53,20 +53,24 @@ async function getAddress(locale) {
             GROUP BY id, city, district, state, street
             ) AS subquery;
         `
-
-    if (result.length > 0) {
-      const uniqueCities = result[0].cities.filter((city, index, self) => {
+        
+    if (
+      result.cities !== null || 
+      result.districts !== null || 
+      result.streets !== null
+      ) {
+      const uniqueCities = result.cities.filter((city, index, self) => {
         return (
           index ===
           self.findIndex((c) => c.city === city.city && c.state === city.state)
         )
       })
-      return [{ ...result[0], cities: uniqueCities }]
+      return [{ ...result, cities: uniqueCities }]
     }
 
     return result
   } catch (error) {
-    throw new {
+    throw {
       type: 'PropertiesQueryError',
       message: `Error ao pegar as propriedades: ${error.message}`
     }()

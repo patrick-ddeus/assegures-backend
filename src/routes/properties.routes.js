@@ -11,5 +11,7 @@ PropertyRouter.post(
   validateSchema(propertySchema),
   PropertyController.createProperty
 )
+PropertyRouter.get('/types', PropertyController.getTypesAndSubtypes)
+
 
 export default PropertyRouter

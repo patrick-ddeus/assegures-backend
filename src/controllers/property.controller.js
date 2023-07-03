@@ -2,13 +2,11 @@
 import { PrismaClient } from '@prisma/client'
 import httpStatus from 'http-status'
 import { sanitizeObjects } from '../helpers/sanitizeObject.js'
-import { UnidecodeString } from '../helpers/unidecode.js'
 import PropertyService from '../services/property.service.js'
 
-const prisma = new PrismaClient()
 
 async function getProperties(req, res) {
-  const { cities, districts, streets, locale, priceMin, priceMax } =
+  const { cities, districts, streets, locale, priceMin, priceMax, goal } =
     sanitizeObjects(req.query)
 
   try {
@@ -18,7 +16,8 @@ async function getProperties(req, res) {
       districts,
       locale,
       priceMin,
-      priceMax
+      priceMax,
+      goal
     })
     return res.status(httpStatus.OK).json(properties)
   } catch (error) {
@@ -49,56 +48,38 @@ const createProperty = async function (req, res) {
     characteristics: bodyCharacteristics
   } = sanitizeObjects(req.body)
 
-  try {
-    const property = await prisma.property.create({
-      data: {
+  
+    const property = await PropertyService.createProperty(
+      {
         title,
         slogan,
         description,
         short_description,
         price,
-        type: {
-          connect: { id: type_id }
-        },
+        type_id,
         emphasis,
         goal,
         status,
+        BodyAddress,
         number_of_rooms,
         number_of_bathrooms,
         number_of_garages,
         suites,
         total_area,
         building_area,
-        address: {
-          create: {
-            street: BodyAddress.street,
-            street_index: UnidecodeString(BodyAddress.street),
-            city: BodyAddress.city,
-            city_index: UnidecodeString(BodyAddress.city),
-            district: BodyAddress.district,
-            district_index: UnidecodeString(BodyAddress.district),
-            state: BodyAddress.state
-          }
-        },
-        characteristics: {
-          connectOrCreate: bodyCharacteristics.map((characterName) => {
-            return {
-              where: { name: characterName },
-              create: { name: characterName }
-            }
-          })
-        }
+        bodyCharacteristics
       }
-    })
+    )
     res.status(httpStatus.CREATED).json(property)
-  } catch (error) {
-    throw new { ...error }() // Possibly error P2002, see error.middleware.js
-  } finally {
-    await prisma.$disconnect()
-  }
+}
+
+const getTypesAndSubtypes = async function (req, res){
+  const types = await PropertyService.getTypesAndSubtypes()
+  res.status(200).json(types)
 }
 
 export default {
   getProperties,
-  createProperty
+  createProperty,
+  getTypesAndSubtypes
 }
