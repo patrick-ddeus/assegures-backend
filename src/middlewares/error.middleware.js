@@ -7,6 +7,12 @@ export default function errorHandler (error, req, res, next) {
     });
   }
 
+  if (error.name === "TypesQueryError") {
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      error: error.message
+    });
+  }
+
   if (error?.code === 'P2002' && error.meta?.target?.includes('title')) {
     return res
       .status(httpStatus.CONFLICT)

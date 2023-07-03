@@ -10,7 +10,8 @@ async function getProperties({
   districts,
   locale,
   priceMin,
-  priceMax
+  priceMax,
+  goal
 }) {
   const where = {}
 
@@ -94,6 +95,13 @@ async function getProperties({
     }
   }
 
+  if(goal){
+    where.goal = {
+      contains: goal,
+      mode: 'insensitive'
+    }
+  }
+
   try {
     const result = await prisma.property.findMany({
       where,
@@ -110,9 +118,11 @@ async function getProperties({
         }
       }
     })
-    return result
+
+    const totalCount = await prisma.property.count({ where });
+    return [...result, {totalCount}]
   } catch (error) {
-    throw new {
+    throw {
       type: 'PropertiesQueryError',
       message: `Error ao pegar as propriedades: ${error.message}`
     }
@@ -121,6 +131,100 @@ async function getProperties({
   }
 }
 
+async function getTypesAndSubtypes () {
+  try {
+    const result = await prisma.$queryRaw`
+    SELECT
+      pt.name AS type_name,
+      JSON_AGG(json_build_object('name', pst.name )) AS sub_types
+    FROM
+      "PropertyType" pt
+    LEFT JOIN
+      "PropertySubType" pst ON pt.id = pst.property_type_id
+    GROUP BY
+      pt.name;
+    `
+
+    return result
+  } catch (error) {
+    console.log(error)
+    throw {
+      type: 'TypesQueryError',
+      message: `Error ao pegar os tipos: ${error.message}`
+    }
+  } finally {
+    await prisma.$disconnect()
+  }
+}
+
+async function createProperty (reqParams) {
+  const {
+    title,
+    slogan,
+    description,
+    short_description,
+    price,
+    type_id,
+    emphasis,
+    goal,
+    status,
+    BodyAddress,
+    number_of_rooms,
+    number_of_bathrooms,
+    number_of_garages,
+    suites,
+    total_area,
+    building_area,
+    bodyCharacteristics
+  } = reqParams
+
+  
+    const property = await prisma.property.create({
+      data: {
+        title,
+        slogan,
+        description,
+        short_description,
+        price,
+        type: {
+          connect: { id: type_id }
+        },
+        emphasis,
+        goal,
+        status,
+        number_of_rooms,
+        number_of_bathrooms,
+        number_of_garages,
+        suites,
+        total_area,
+        building_area,
+        address: {
+          create: {
+            street: BodyAddress.street,
+            street_index: UnidecodeString(BodyAddress.street),
+            city: BodyAddress.city,
+            city_index: UnidecodeString(BodyAddress.city),
+            district: BodyAddress.district,
+            district_index: UnidecodeString(BodyAddress.district),
+            state: BodyAddress.state
+          }
+        },
+        characteristics: {
+          connectOrCreate: bodyCharacteristics.map((characterName) => {
+            return {
+              where: { name: characterName },
+              create: { name: characterName }
+            }
+          })
+        }
+      }
+    })
+    
+    return property
+}
+
 export default {
-  getProperties
+  getProperties,
+  createProperty,
+  getTypesAndSubtypes
 }
