@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "windows"]
 }
 
 datasource db {
@@ -10,108 +11,108 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model PropertyType{
-  id         Int     @id @default(autoincrement())
+model PropertyType {
+  id Int @id @default(autoincrement())
 
-  name       String    @db.Text
+  name String @db.Text
 
   properties Property[]
 
   properties_sub_types PropertySubType[]
 }
 
-model PropertySubType{
-  id         Int     @id @default(autoincrement())
+model PropertySubType {
+  id Int @id @default(autoincrement())
 
-  name       String    @db.Text
+  name String @db.Text
 
   properties_type PropertyType @relation(fields: [property_type_id], references: [id])
 
-  property_type_id Int 
+  properties Property[]
+
+  property_type_id Int
 }
 
-model PropertyCharacteristic{
-   id         Int     @id @default(autoincrement())
+model PropertyCharacteristic {
+  id Int @id @default(autoincrement())
 
-   name       String    @db.Text  @unique
+  name String @unique @db.Text
 
-   properties Property[]
-
+  properties Property[]
 }
 
 model PropertyAddress {
-  id            Int @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  city          String @db.Text
+  city String @db.Text
 
-  city_index          String @db.Text
+  city_index String @db.Text
 
-  district      String @db.Text
+  district String @db.Text
 
-  district_index      String @db.Text
+  district_index String @db.Text
 
-  street        String @db.Text
+  street String @db.Text
 
-  street_index        String @db.Text
+  street_index String @db.Text
 
-  state         String @db.Text
+  state String @db.Text
 
-  property      Property @relation(fields: [property_id], references: [id])
+  property Property @relation(fields: [property_id], references: [id])
 
-  property_id   Int @unique
-
+  property_id Int @unique
 
   @@index(fields: [city, district, street])
 }
 
 model Property {
+  id Int @id @default(autoincrement())
 
-  id                  Int      @id @default(autoincrement())
+  title String @unique @db.Text
 
-  title               String   @db.Text @unique
+  slogan String? @db.Text
 
-  slogan              String?   @db.Text
+  description String @db.Text
 
-  description         String @db.Text
+  short_description String @db.Text
 
-  short_description   String @db.Text
+  price Decimal @db.Decimal(10, 2)
 
-  price               Decimal @db.Decimal(10, 2)
+  type PropertyType @relation(fields: [type_id], references: [id])
 
-  type                PropertyType @relation(fields: [type_id], references: [id])
+  subtype PropertySubType @relation(fields: [subtype_id], references: [id])
 
-  type_id             Int
+  type_id Int
 
-  emphasis            Boolean @default(false)
+  subtype_id Int 
 
-  goal                String @db.Text
+  emphasis Boolean @default(false)
 
-  status              Boolean @default(true)
+  goal String @db.Text
 
-  address             PropertyAddress?
+  status Boolean @default(true)
 
-  number_of_rooms     Int
+  address PropertyAddress?
+
+  number_of_rooms Int
 
   number_of_bathrooms Int
-  
-  number_of_garages   Int
 
-  suites              Int
+  number_of_garages Int
 
-  total_area          Int
+  suites Int
 
-  building_area       Int
+  total_area Int
+
+  building_area Int
 
   characteristics PropertyCharacteristic[]
 
-  createdAt           DateTime @default(now())
+  createdAt DateTime @default(now())
 
-  updatedAt           DateTime @updatedAt
-
+  updatedAt DateTime @updatedAt
 }
 
 model PropertyImages {
   id Int @id @default(autoincrement())
-
-  
 }

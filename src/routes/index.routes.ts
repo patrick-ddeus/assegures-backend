@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import AddressRouter from './address.routes.js'
-import ContactsRouter from './contacts.routes.js'
-import PropertyRouter from './properties.routes.js'
+import AddressRouter from './address.routes'
+import ContactsRouter from './contacts.routes'
+import PropertyRouter from './properties.routes'
 
 const IndexRouter = Router()
 

@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import ContactsController from '../controllers/contacts.controller.js'
-import { validateSchema } from '../middlewares/schema.middleware.js'
-import ContactSchema from '../schemas/contact.schema.js'
+import ContactsController from '@/controllers/contacts.controller'
+import { validateSchema } from '@/middlewares/schema.middleware'
+import { ContactSchema } from '@/schemas'
 
 const ContactsRouter = Router()
 

@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client'
+import { Request, Response } from 'express'
 
-const getContacts = async function (req, res) {
+const getContacts = async function (req: Request, res: Response) {
   try {
     res.status(200).json()
   } catch (error) {
@@ -10,7 +10,7 @@ const getContacts = async function (req, res) {
   }
 }
 
-const createContact = async (req, res) => {
+const createContact = async (req: Request, res: Response) => {
   const { avatar, name, role, phone } = req.body
   try {
     res.status(201).json()

@@ -6,14 +6,23 @@ const seed = async () => {
   try {
     const data = [
       {
-        id: 8,
+        id: 1,
         title: 'Exemplo de Imóvel 3',
         slogan: 'A melhor opção para morar',
         description:
           'Este imóvel é espaçoso e bem localizado, perfeito para famílias.',
         short_description: 'Imóvel espaçoso e bem localizado',
         price: '150000',
-        type_id: 1,
+        type_id: {
+          connect: {
+            id: 1
+          }
+        },
+        subtype_id: {
+          connect: {
+            id: 1
+          }
+        },
         emphasis: true,
         goal: 'Venda',
         status: true,
@@ -26,7 +35,7 @@ const seed = async () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         characteristics: {
-          create: [
+          connectOrCreate: [
             {
               id: 1,
               name: 'Agua'
@@ -41,20 +50,32 @@ const seed = async () => {
           create: {
             id: 4,
             city: 'São Gonçalo',
+            city_index: 'sao goncalo',
             district: 'Alcântara',
+            district_index: 'alcantara',
             street: 'Main Street',
+            street_index: 'main street',
             state: 'Rio de Janeiro'
           }
         }
       },
       {
-        id: 9,
+        id: 2,
         title: 'Exemplo de Imóvel 4',
         slogan: 'Excelente localização',
         description: 'Imóvel com vista panorâmica e próximo a comércios.',
         short_description: 'Imóvel com vista panorâmica',
         price: '200000',
-        type_id: 2,
+        type_id: {
+          connect: {
+            id: 2
+          }
+        },
+        subtype_id: {
+          connect: {
+            id: 2
+          }
+        },
         emphasis: false,
         goal: 'Aluguel',
         status: true,
@@ -67,7 +88,7 @@ const seed = async () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         characteristics: {
-          create: [
+          connectOrCreate: [
             {
               id: 3,
               name: 'Ar Condicionado'
@@ -82,9 +103,12 @@ const seed = async () => {
           create: {
             id: 5,
             city: 'Rio de Janeiro',
+            city_index: 'rio de janeiro',
             district: 'Copacabana',
+            district_index: 'copacabana',
             street: 'Beach Avenue',
-            state: 'Rio de Janeiro'
+            street_index: 'beach avenue',
+            state: 'RJ'
           }
         }
       }
@@ -100,4 +124,4 @@ const seed = async () => {
   }
 }
 
-// seed();
+seed()

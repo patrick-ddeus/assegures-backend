@@ -7,4 +7,4 @@ const ContactSchema = Joi.object({
   phone: Joi.string().required()
 })
 
-export default ContactSchema
+export { ContactSchema }
