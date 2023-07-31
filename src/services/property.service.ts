@@ -4,11 +4,6 @@ import { NoContentError } from '@/Errors'
 
 async function getProperties(reqParams: PropertyQueryParams) {
   const result = await propertyRepository.listAllWithCount(reqParams)
-
-  if (result.length === 0) {
-    throw NoContentError()
-  }
-
   return result
 }
 

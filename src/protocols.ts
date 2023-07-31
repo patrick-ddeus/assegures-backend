@@ -13,6 +13,9 @@ export type PropertyQueryParams = {
   goal: string
   propertyType: string
   propertySubType: string
+  areaMin: string
+  areaMax: string
+  rooms: string
 }
 
 export type CreatePropertyBody = {

@@ -12,10 +12,12 @@ async function listAllWithCount({
   priceMax,
   goal,
   propertyType,
-  propertySubType
+  propertySubType,
+  areaMin,
+  areaMax,
+  rooms
 }: PropertyQueryParams) {
   const where: Prisma.PropertyWhereInput = {}
-
   if (locale) {
     const localeClean = UnidecodeString(locale)
 
@@ -90,22 +92,22 @@ async function listAllWithCount({
     where.AND = [
       {
         price: {
-          gte: priceMin
+          gte: priceMin.replace(/\D+/g, '')
         }
       },
       {
         price: {
-          lte: priceMax
+          lte: priceMax.replace(/\D+/g, '')
         }
       }
     ]
   } else if (priceMin) {
     where.price = {
-      gte: priceMin
+      gte: priceMin.replace(/\D+/g, '')
     }
   } else if (priceMax) {
     where.price = {
-      lte: priceMax
+      lte: priceMax.replace(/\D+/g, '')
     }
   }
 
@@ -126,6 +128,31 @@ async function listAllWithCount({
       {
         subtype_id: {
           equals: Number(propertySubType)
+        }
+      }
+    ])
+  }
+
+  if (areaMin && areaMax) {
+    where.AND = ((where.AND as Prisma.PropertyWhereInput[]) || []).concat([
+      {
+        total_area: {
+          gte: Number(areaMin.replace(/\D+/g, ''))
+        }
+      },
+      {
+        total_area: {
+          lte: Number(areaMax.replace(/\D+/g, ''))
+        }
+      }
+    ])
+  }
+
+  if (rooms) {
+    where.AND = ((where.AND as Prisma.PropertyWhereInput[]) || []).concat([
+      {
+        number_of_rooms: {
+          gte: Number(rooms)
         }
       }
     ])
