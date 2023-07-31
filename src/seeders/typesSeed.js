@@ -5,13 +5,13 @@ const prisma = new PrismaClient();
 const createPropertyTypesAndSubTypes = async () => {
   const tipoResidencial = await prisma.propertyType.create({
     data: {
-      name: 'residencial',
+      name: 'Residencial',
     },
   });
 
   const tipoComercial = await prisma.propertyType.create({
     data: {
-      name: 'comercial',
+      name: 'Comercial',
     },
   });
 
