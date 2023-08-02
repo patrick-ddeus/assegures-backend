@@ -17,7 +17,9 @@ async function listAllWithCount({
   areaMax,
   rooms
 }: PropertyQueryParams) {
+
   const where: Prisma.PropertyWhereInput = {}
+  
   if (locale) {
     const localeClean = UnidecodeString(locale)
 
