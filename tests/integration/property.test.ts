@@ -30,7 +30,7 @@ describe('GET /properties', () => {
       {
         id: property.id,
         title: expect.any(String),
-        slogan: expect.any(String),
+        ref: expect.any(String),
         description: expect.any(String),
         short_description: expect.any(String),
         price: expect.any(String),

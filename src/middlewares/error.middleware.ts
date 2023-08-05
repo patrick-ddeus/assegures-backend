@@ -10,7 +10,7 @@ export function errorHandler(
 ) {
   if (error.name === 'NoContent') {
     return res.status(httpStatus.NO_CONTENT).json({
-      error: error.message,
+      error: error.message
     })
   }
 
@@ -30,6 +30,10 @@ export function errorHandler(
     return res
       .status(httpStatus.CONFLICT)
       .json({ error: 'Erro, imóvel com esse título já cadastrado' })
+  }
+
+  if (error.name === 'BadRequestError') {
+    return res.status(httpStatus.BAD_REQUEST).json({ error: error.message })
   }
 
   return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({

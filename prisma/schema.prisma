@@ -70,13 +70,15 @@ model Property {
 
   title String @unique @db.Text
 
-  slogan String? @db.Text
+  ref String? @db.Text
 
   description String @db.Text
 
   short_description String @db.Text
 
   price Decimal @db.Decimal(10, 2)
+
+  mapAddress String @db.Text
 
   type PropertyType @relation(fields: [type_id], references: [id])
 
@@ -100,6 +102,8 @@ model Property {
 
   number_of_garages Int
 
+  images PropertyImages[]
+
   suites Int
 
   total_area Int
@@ -115,4 +119,40 @@ model Property {
 
 model PropertyImages {
   id Int @id @default(autoincrement())
+
+  property Property @relation(fields: [property_id], references: [id])
+
+  property_id Int @unique
+}
+
+model State {
+  id       Int      @id @default(autoincrement())
+
+  name     String   @unique
+
+  City City[]
+
+  abbreviation String
+}
+
+model City {
+  id        Int      @id @default(autoincrement())
+
+  name      String
+
+  state     State    @relation(fields: [stateId], references: [id])
+
+  stateId   Int
+
+  neighborhood Neighborhood[] 
+}
+
+model Neighborhood {
+  id         Int      @id @default(autoincrement())
+
+  name       String
+
+  city       City     @relation(fields: [cityId], references: [id])
+
+  cityId     Int
 }

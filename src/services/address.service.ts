@@ -1,67 +1,16 @@
-import { AddressQueryParam } from '@/protocols.js'
 import addressRepository from '@/repositories/address-repository'
+import { NoContentError } from '../Errors'
 
-async function getAddress(queryParams: AddressQueryParam) {
-  const result = await addressRepository.list(queryParams)
+async function getCities() {
+  const result = await addressRepository.listCities()
 
-  const formatedResult = separateProperties(result)
+  if (result.length === 0) {
+    throw NoContentError()
+  }
 
-  return formatedResult
-}
-
-function separateProperties(data: OriginalData[]) {
-  const cities: CityData[] = data.map((item) => ({
-    id: item.id,
-    city: item.city,
-    state: item.state
-  }))
-
-  const districts: DistrictData[] = data.map((item) => ({
-    id: item.id,
-    city: item.city,
-    state: item.state,
-    district: item.district
-  }))
-
-  const streets: StreetData[] = data.map((item) => ({
-    id: item.id,
-    city: item.city,
-    state: item.state,
-    district: item.district,
-    street: item.street
-  }))
-
-  return { cities, streets, districts }
-}
-
-interface OriginalData {
-  id: number
-  city: string
-  city_index: string
-  district: string
-  district_index: string
-  street: string
-  street_index: string
-  state: string
-  property_id: number
-}
-
-interface CityData {
-  id: number
-  city: string
-  state: string
-}
-
-interface StreetData {
-  id: number
-  street: string
-}
-
-interface DistrictData {
-  id: number
-  district: string
+  return result
 }
 
 export default {
-  getAddress
+  getCities
 }

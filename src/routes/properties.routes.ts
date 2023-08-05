@@ -6,11 +6,12 @@ import { PropertySchema } from '@/schemas'
 const PropertyRouter = Router()
 
 PropertyRouter.get('/', PropertyController.getProperties)
+PropertyRouter.get('/types', PropertyController.getTypesAndSubtypes)
+PropertyRouter.get('/address', PropertyController.getAddress)
+PropertyRouter.get('/:propertyId', PropertyController.getPropertyById)
 PropertyRouter.post(
   '/',
   validateSchema(PropertySchema),
   PropertyController.createProperty
 )
-PropertyRouter.get('/types', PropertyController.getTypesAndSubtypes)
-
 export default PropertyRouter

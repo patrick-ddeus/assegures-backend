@@ -7,6 +7,6 @@ const IndexRouter = Router()
 
 IndexRouter.use('/properties', PropertyRouter)
 IndexRouter.use('/contacts', ContactsRouter)
-IndexRouter.use('/addresses', AddressRouter)
+IndexRouter.use('/address', AddressRouter)
 
 export default IndexRouter

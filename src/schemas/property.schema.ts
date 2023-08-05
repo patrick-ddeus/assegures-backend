@@ -3,7 +3,7 @@ import { CreatePropertyBody } from '@/protocols'
 
 const PropertySchema = Joi.object<CreatePropertyBody>({
   title: Joi.string().required(),
-  slogan: Joi.string().required(),
+  ref: Joi.string().required(),
   description: Joi.string().required(),
   short_description: Joi.string().required(),
   price: Joi.number().required(),
@@ -11,13 +11,12 @@ const PropertySchema = Joi.object<CreatePropertyBody>({
   subtype_id: Joi.number().required(),
   emphasis: Joi.boolean().required(),
   goal: Joi.string().required(),
-  status: Joi.boolean().required(),
-  bodyAddress: Joi.object({
-    street: Joi.string().required(),
-    district: Joi.string().required(),
-    city: Joi.string().required(),
-    state: Joi.string().required()
-  }).required(),
+  status: Joi.string().required(),
+  mapAddress: Joi.string().required(),
+  street: Joi.string().required(),
+  district: Joi.string().required(),
+  city: Joi.string().required(),
+  state: Joi.string().required(),
   number_of_rooms: Joi.number().required(),
   number_of_bathrooms: Joi.number().required(),
   number_of_garages: Joi.number().required(),

@@ -5,7 +5,7 @@ export async function createProperty(typeId: number, subtypeId: number) {
   return prisma.property.create({
     data: {
       title: faker.lorem.words(3),
-      slogan: faker.lorem.words(5),
+      ref: faker.lorem.words(5),
       description: faker.lorem.paragraph(),
       short_description: faker.lorem.sentence(),
       price: faker.number.int({ min: 100000, max: 1000000 }),

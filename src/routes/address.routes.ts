@@ -3,6 +3,6 @@ import AddressController from '@/controllers/address.controller'
 
 const AddressRouter = Router()
 
-AddressRouter.get('/', AddressController.getAddress)
+AddressRouter.get('/cities', AddressController.getCities)
 
 export default AddressRouter

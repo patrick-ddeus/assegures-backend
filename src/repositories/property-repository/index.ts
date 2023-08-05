@@ -1,7 +1,12 @@
 import { prisma } from '@/configs'
-import { CreatePropertyBody, PropertyQueryParams } from '@/protocols'
+import {
+  AddressQueryParam,
+  CreatePropertyBody,
+  PropertyQueryParams
+} from '@/protocols'
 import { Prisma } from '@prisma/client'
 import { UnidecodeString } from '@/helpers'
+import parseBoolean from '../../utils/parseBoolean'
 
 async function listAllWithCount({
   cities,
@@ -15,11 +20,13 @@ async function listAllWithCount({
   propertySubType,
   areaMin,
   areaMax,
-  rooms
+  rooms,
+  garageVacancy,
+  suites,
+  bathrooms
 }: PropertyQueryParams) {
-
   const where: Prisma.PropertyWhereInput = {}
-  
+
   if (locale) {
     const localeClean = UnidecodeString(locale)
 
@@ -138,12 +145,12 @@ async function listAllWithCount({
   if (areaMin && areaMax) {
     where.AND = ((where.AND as Prisma.PropertyWhereInput[]) || []).concat([
       {
-        total_area: {
+        building_area: {
           gte: Number(areaMin.replace(/\D+/g, ''))
         }
       },
       {
-        total_area: {
+        building_area: {
           lte: Number(areaMax.replace(/\D+/g, ''))
         }
       }
@@ -155,6 +162,36 @@ async function listAllWithCount({
       {
         number_of_rooms: {
           gte: Number(rooms)
+        }
+      }
+    ])
+  }
+
+  if (garageVacancy) {
+    where.AND = ((where.AND as Prisma.PropertyWhereInput[]) || []).concat([
+      {
+        number_of_garages: {
+          gte: Number(garageVacancy)
+        }
+      }
+    ])
+  }
+
+  if (suites) {
+    where.AND = ((where.AND as Prisma.PropertyWhereInput[]) || []).concat([
+      {
+        suites: {
+          gte: Number(suites)
+        }
+      }
+    ])
+  }
+
+  if (bathrooms) {
+    where.AND = ((where.AND as Prisma.PropertyWhereInput[]) || []).concat([
+      {
+        number_of_bathrooms: {
+          gte: Number(bathrooms)
         }
       }
     ])
@@ -182,7 +219,7 @@ async function listAllWithCount({
 async function create(bodyParams: CreatePropertyBody) {
   const {
     title,
-    slogan,
+    ref,
     description,
     short_description,
     price,
@@ -191,20 +228,24 @@ async function create(bodyParams: CreatePropertyBody) {
     emphasis,
     goal,
     status,
-    bodyAddress,
+    street,
+    district,
+    city,
+    state,
     number_of_rooms,
     number_of_bathrooms,
     number_of_garages,
     suites,
     total_area,
     building_area,
-    bodyCharacteristics
+    bodyCharacteristics,
+    mapAddress
   } = bodyParams
 
   return prisma.property.create({
     data: {
       title,
-      slogan,
+      ref,
       description,
       short_description,
       price,
@@ -216,22 +257,23 @@ async function create(bodyParams: CreatePropertyBody) {
       },
       emphasis,
       goal,
-      status,
+      status: parseBoolean(status),
       number_of_rooms,
       number_of_bathrooms,
       number_of_garages,
       suites,
       total_area,
       building_area,
+      mapAddress,
       address: {
         create: {
-          street: bodyAddress.street,
-          street_index: UnidecodeString(bodyAddress.street),
-          city: bodyAddress.city,
-          city_index: UnidecodeString(bodyAddress.city),
-          district: bodyAddress.district,
-          district_index: UnidecodeString(bodyAddress.district),
-          state: bodyAddress.state
+          street,
+          street_index: UnidecodeString(street),
+          city,
+          city_index: UnidecodeString(city),
+          district,
+          district_index: UnidecodeString(district),
+          state
         }
       },
       characteristics: {
@@ -261,6 +303,26 @@ async function listTypesAndSubtypes() {
     `
 }
 
+async function listPropertyById(id: number) {
+  return prisma.property.findFirst({
+    where: {
+      id
+    },
+    include: {
+      characteristics: true,
+      address: {
+        select: {
+          id: true,
+          city: true,
+          district: true,
+          street: true,
+          state: true
+        }
+      }
+    }
+  })
+}
+
 type SubType = {
   id: number
   name: string
@@ -272,8 +334,53 @@ type SQLResult = {
   sub_types: SubType[]
 }
 
+async function listAddress({ locale, goal }: AddressQueryParam) {
+  const where: Prisma.PropertyAddressWhereInput = {}
+  let localeClean = locale
+
+  if (locale) {
+    localeClean = UnidecodeString(locale)
+    where.OR = [
+      {
+        city_index: {
+          contains: localeClean,
+          mode: 'insensitive'
+        }
+      },
+      {
+        district_index: {
+          contains: localeClean,
+          mode: 'insensitive'
+        }
+      },
+      {
+        street_index: {
+          contains: localeClean,
+          mode: 'insensitive'
+        }
+      }
+    ]
+  }
+
+  if (goal) {
+    where.AND = {
+      property: {
+        goal: goal
+      }
+    }
+  }
+
+  const result = prisma.propertyAddress.findMany({
+    where
+  })
+
+  return result
+}
+
 export default {
   listAllWithCount,
   listTypesAndSubtypes,
+  listPropertyById,
+  listAddress,
   create
 }

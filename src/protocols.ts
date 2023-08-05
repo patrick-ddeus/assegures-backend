@@ -16,11 +16,14 @@ export type PropertyQueryParams = {
   areaMin: string
   areaMax: string
   rooms: string
+  garageVacancy: string,
+  suites: string,
+  bathrooms: string
 }
 
 export type CreatePropertyBody = {
   title: string
-  slogan: string
+  ref: string
   description: string
   short_description: string
   price: number
@@ -28,8 +31,7 @@ export type CreatePropertyBody = {
   subtype_id: number
   emphasis: boolean
   goal: string
-  status: boolean
-  bodyAddress: PropertyAddress
+  status: string
   number_of_rooms: number
   number_of_bathrooms: number
   number_of_garages: number
@@ -37,7 +39,8 @@ export type CreatePropertyBody = {
   total_area: number
   bodyCharacteristics: string[]
   building_area: number
-}
+  mapAddress: string
+} & PropertyAddress
 
 export type PropertyAddress = {
   street: string

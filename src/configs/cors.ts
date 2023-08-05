@@ -5,9 +5,9 @@ const MODE = (process.env.MODE as keyof CorsWhiteList) || 'dev'
 
 const allowedDomains: CorsWhiteList = {
   dev: [
-    'http://localhost:3000/',
+    'http://localhost:3000',
     'http://localhost:5000/',
-    'https://localhost:3000/'
+    'http://localhost:3000/'
   ],
   prod: ['']
 }

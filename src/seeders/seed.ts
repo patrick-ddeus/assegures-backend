@@ -8,7 +8,7 @@ const seed = async () => {
       Prisma.PropertyUncheckedCreateInput
     > = {
       title: 'Exemplo de Imóvel 3',
-      slogan: 'A melhor opção para morar',
+      ref: 'ref:2345',
       description:
         'Este imóvel é espaçoso e bem localizado, perfeito para famílias.',
       short_description: 'Imóvel espaçoso e bem localizado',
